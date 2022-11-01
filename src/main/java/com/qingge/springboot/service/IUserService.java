@@ -1,5 +1,6 @@
 package com.qingge.springboot.service;
 
+import com.qingge.springboot.controller.dto.UserDTO;
 import com.qingge.springboot.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -9,8 +10,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * </p>
  *
  * @author Fangqi
- * @since 2022-10-30
+ * @since 2022-10-31
  */
 public interface IUserService extends IService<User> {
 
+    UserDTO login(UserDTO userDTO);
 }
