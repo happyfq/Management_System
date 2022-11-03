@@ -36,7 +36,7 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserController {
 
-//    @Value("${files.upload.path}")
+    //    @Value("${files.upload.path}")
 //    private String filesUploadPath;
     @Resource
     private IUserService userService;
@@ -46,21 +46,23 @@ public class UserController {
     public Result login(@RequestBody UserDTO userDTO) {
         String username = userDTO.getUsername();
         String password = userDTO.getPassword();
-        if(StrUtil.isBlank(username)||StrUtil.isBlank(password)){
-            return Result.error(Constants.CODE_400,"参数错误");
+        if (StrUtil.isBlank(username) || StrUtil.isBlank(password)) {
+            return Result.error(Constants.CODE_400, "参数错误");
         }
         UserDTO dto = userService.login(userDTO);
         return Result.success(dto);
     }
+
     @PostMapping("/register")
     public Result register(@RequestBody UserDTO userDTO) {
         String username = userDTO.getUsername();
         String password = userDTO.getPassword();
-        if(StrUtil.isBlank(username)||StrUtil.isBlank(password)){
-            return Result.error(Constants.CODE_400,"参数错误");
+        if (StrUtil.isBlank(username) || StrUtil.isBlank(password)) {
+            return Result.error(Constants.CODE_400, "参数错误");
         }
         return Result.success(userService.register(userDTO));
     }
+
     @PostMapping
     public Result save(@RequestBody User user) {
         return Result.success(userService.saveOrUpdate(user));
@@ -85,7 +87,7 @@ public class UserController {
     @GetMapping("/username/{username}")
     public Result findOne(@PathVariable String username) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("username",username);
+        queryWrapper.eq("username", username);
         return Result.success(userService.getOne(queryWrapper));
     }
 
@@ -96,9 +98,9 @@ public class UserController {
 
     @GetMapping("/page")
     public Result findPage(@RequestParam Integer pageNum,
-                               @RequestParam Integer pageSize,
-                               @RequestParam(defaultValue = "") String username,
-                               @RequestParam(defaultValue = "") String nickname) {
+                           @RequestParam Integer pageSize,
+                           @RequestParam(defaultValue = "") String username,
+                           @RequestParam(defaultValue = "") String nickname) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.orderByDesc("id");
         if (!"".equals((username))) {
@@ -107,6 +109,8 @@ public class UserController {
         if (!"".equals(nickname)) {
             queryWrapper.like("nickname", nickname);
         }
+        User currentUser = TokenUtils.getCurrentUser();
+        System.out.println("**********获取当前用户信息："+currentUser.getNickname());
         return Result.success(userService.page(new Page<>(pageNum, pageSize), queryWrapper));
     }
 
