@@ -77,7 +77,7 @@ public boolean deleteBatch(@RequestBody List<Integer> ids){
 @GetMapping("/page")
 public Page<${entity}> findPage(@RequestParam Integer pageNum,
 @RequestParam Integer pageSize){
-        QueryWrapper<User> queryWrapper=new QueryWrapper<>();
+        QueryWrapper<${entity}> queryWrapper=new QueryWrapper<>();
         queryWrapper.orderByDesc("id");
         return ${table.entityPath}Service.page(new Page<>(pageNum,pageSize),queryWrapper);
         }
