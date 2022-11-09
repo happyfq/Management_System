@@ -3,11 +3,15 @@ package com.qingge.springboot.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
+import com.qingge.springboot.config.common.Constants;
 import com.qingge.springboot.config.common.Result;
+import com.qingge.springboot.entity.Dict;
+import com.qingge.springboot.mapper.DictMapper;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
@@ -31,6 +35,8 @@ public class MenuController {
     @Resource
     private IMenuService menuService;
 
+    @Resource
+    private DictMapper dictMapper;
 
 
     // 新增或者更新
@@ -58,8 +64,19 @@ public class MenuController {
 //    }
 
     @GetMapping
-    public Result findAll() {
-        return Result.success(menuService.list());
+    public Result findAll(@RequestParam String name) {
+        QueryWrapper<Menu> queryWrapper = new QueryWrapper<>();
+        queryWrapper.like("name", name);
+        queryWrapper.orderByDesc("id");
+        //查询所有数据
+        List<Menu> list = menuService.list(queryWrapper);
+        //找出pid为null的一级菜单
+        List<Menu> parentNode = list.stream().filter(menu -> menu.getPid() == null).collect(Collectors.toList());
+        for (Menu menu : parentNode) {
+            //筛选所有数据中的pid=父级id的数据就是二级菜单
+            menu.setChildren(list.stream().filter(m -> menu.getId().equals(m.getPid())).collect(Collectors.toList()));
+        }
+        return Result.success(parentNode);
     }
 
     @GetMapping("/{id}")
@@ -77,12 +94,12 @@ public class MenuController {
         return Result.success(menuService.page(new Page<>(pageNum, pageSize), queryWrapper));
     }
 
-//    @GetMapping("/icons")
-//    public Result getIcons() {
-//        QueryWrapper<Dict> queryWrapper = new QueryWrapper<>();
-//        queryWrapper.eq("type", Constants.DICT_TYPE_ICON);
-//        return Result.success(dictMapper.selectList(queryWrapper));
-//    }
+    @GetMapping("/icons")
+    public Result getIcons() {
+        QueryWrapper<Dict> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("type", Constants.DICT_TYPE_ICON);
+        return Result.success(dictMapper.selectList(queryWrapper));
+    }
 
 }
 
