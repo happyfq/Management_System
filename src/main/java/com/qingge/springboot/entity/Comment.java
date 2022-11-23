@@ -47,10 +47,10 @@ public class Comment implements Serializable {
     @TableField(exist = false)
     private Integer pUserId;  // 父节点的用户id
 
-    @ApiModelProperty("最上级评论id")
+    @ApiModelProperty("最上级评论 id")
     private Integer originId;
 
-    @ApiModelProperty("关联文章的id")
+    @ApiModelProperty("关联文章的 id")
     private Integer articleId;
 
     @TableField(exist = false)
